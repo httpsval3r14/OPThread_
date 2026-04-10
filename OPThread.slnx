@@ -1,7 +1,0 @@
-<Solution>
-  <Configurations>
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
-  <Project Path="OPThread.vcxproj" Id="7cb39e0f-da88-4842-99a4-ee108238ad0e" />
-</Solution>
