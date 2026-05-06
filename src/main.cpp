@@ -1,6 +1,7 @@
-#include <iostream>
+#include "core/loom_orchestrator.h"
 
-int main(int argc, char* argv[]) {
-	std::cout << "Hello, World!" << std::endl;
-	return 0;
+int main() {
+    LoomOrchestrator app;
+    app.run();
+    return 0;
 }
