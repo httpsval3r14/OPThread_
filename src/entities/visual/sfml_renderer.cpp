@@ -157,8 +157,7 @@ namespace entities::visual {
         size_t nodeCut = static_cast<size_t>(progress * nodeOrder.size());
         size_t edgeCut = static_cast<size_t>(progress * edgeOrder.size());
 
-        sf::Color glowColor(150, 220, 255, 100);
-
+        sf::Color glowColor(128, 128, 128, 255);
         sf::VertexArray edgeArray(sf::PrimitiveType::Lines, edgeCut * 2);
         for (size_t i = 0; i < edgeCut; ++i) {
             sf::Vector2f posA = getPos(edgeOrder[i].first);
