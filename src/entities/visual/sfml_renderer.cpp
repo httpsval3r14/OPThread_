@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <unordered_set>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 
 namespace entities::visual {
 
@@ -33,7 +35,6 @@ namespace entities::visual {
         return { x, y };
     }
 
-
     static void drawFrame(sf::RenderTarget& target, const sf::Vector2u& winSize) {
         const float margin = 20.0f;
 
@@ -43,7 +44,7 @@ namespace entities::visual {
 
         sf::RectangleShape bottomFrame;
         bottomFrame.setSize(sf::Vector2f(static_cast<float>(winSize.x), margin));
-        bottomFrame.setPosition(sf::Vector2f(0.0f, static_cast<float>(winSize.y) - margin));
+        bottomFrame.setPosition({ 0.0f, static_cast<float>(winSize.y) - margin });
         bottomFrame.setFillColor(sf::Color::Black);
 
         sf::RectangleShape leftFrame;
@@ -52,7 +53,7 @@ namespace entities::visual {
 
         sf::RectangleShape rightFrame;
         rightFrame.setSize(sf::Vector2f(margin, static_cast<float>(winSize.y)));
-        rightFrame.setPosition(sf::Vector2f(static_cast<float>(winSize.x) - margin, 0.0f));
+        rightFrame.setPosition({ static_cast<float>(winSize.x) - margin, 0.0f });
         rightFrame.setFillColor(sf::Color::Black);
 
         target.draw(topFrame);
@@ -156,36 +157,50 @@ namespace entities::visual {
         size_t nodeCut = static_cast<size_t>(progress * nodeOrder.size());
         size_t edgeCut = static_cast<size_t>(progress * edgeOrder.size());
 
+        sf::Color glowColor(150, 220, 255, 100);
+
         sf::VertexArray edgeArray(sf::PrimitiveType::Lines, edgeCut * 2);
         for (size_t i = 0; i < edgeCut; ++i) {
             sf::Vector2f posA = getPos(edgeOrder[i].first);
             sf::Vector2f posB = getPos(edgeOrder[i].second);
 
             edgeArray[i * 2].position = posA;
-            edgeArray[i * 2].color = baseEdgeColor;
+            edgeArray[i * 2].color = glowColor;
             edgeArray[i * 2 + 1].position = posB;
-            edgeArray[i * 2 + 1].color = baseEdgeColor;
+            edgeArray[i * 2 + 1].color = glowColor;
         }
-        target.draw(edgeArray);
+
+        sf::RenderStates glowStates;
+        glowStates.blendMode = sf::BlendAdd;
+        target.draw(edgeArray, glowStates);
 
         float margin = 20.0f;
         sf::RectangleShape frame;
         frame.setFillColor(sf::Color::Black);
 
-        frame.setSize({ (float)winSize.x, margin }); frame.setPosition({ 0,0 }); target.draw(frame);
-        frame.setPosition({ 0, (float)winSize.y - margin }); target.draw(frame);
-        frame.setSize({ margin, (float)winSize.y }); frame.setPosition({ 0,0 }); target.draw(frame);
-        frame.setPosition({ (float)winSize.x - margin, 0 }); target.draw(frame);
+        frame.setSize({ (float)winSize.x, margin });
+        frame.setPosition({ 0.f, 0.f });
+        target.draw(frame);
+
+        frame.setPosition({ 0.f, (float)winSize.y - margin });
+        target.draw(frame);
+
+        frame.setSize({ margin, (float)winSize.y });
+        frame.setPosition({ 0.f, 0.f });
+        target.draw(frame);
+
+        frame.setPosition({ (float)winSize.x - margin, 0.f });
+        target.draw(frame);
 
         sf::VertexArray nodeArray(sf::PrimitiveType::Points, nodeCut);
         for (size_t i = 0; i < nodeCut; ++i) {
             nodeArray[i].position = getPos(nodeOrder[i]);
-            nodeArray[i].color = brightNodeColor;
+            nodeArray[i].color = sf::Color::White;
         }
 
-        sf::RenderStates states;
-        states.shader = &getPointShader();
-        target.draw(nodeArray, states);
+        sf::RenderStates nodeStates;
+        nodeStates.shader = &getPointShader();
+        target.draw(nodeArray, nodeStates);
     }
 
-} 
+}
